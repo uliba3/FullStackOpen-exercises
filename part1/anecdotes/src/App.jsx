@@ -15,6 +15,9 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(Array(8).fill(0));
+  const [biggestValue, setBiggestValue] = useState(0);
+  const [biggestPosition, setBiggestPosition] = useState(0);
+
   const selectRandom = () => {
     setSelected(Math.floor(Math.random() * 8));
   }
@@ -22,14 +25,24 @@ const App = () => {
     const copy = [...points];
     copy[selected]++;
     setPoints(copy);
+    const v = Math.max(...copy);
+    const i = copy.indexOf(v);
+    setBiggestValue(v);
+    setBiggestPosition(i);
   }
+  console.log("biggestValue", biggestValue);
+  console.log("biggestPosition", biggestPosition);
 
   return (
     <>
+      <h1>Anecdote of the day</h1>
       <div>{anecdotes[selected]}</div>
       <div>has {points[selected]} votes</div>
       <button onClick={vote}>vote</button>
       <button onClick={selectRandom}>next anecdotes</button>
+      <h1>Anecdote with most votes</h1>
+      <div>{anecdotes[biggestPosition]}</div>
+      <div>has {points[biggestPosition]} votes</div>
     </>
   )
 }
