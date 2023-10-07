@@ -19,6 +19,11 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
+      },
+      {
+        name: 'Redux',
+        exercises: 11,
+        id: 4
       }
     ]
   }
@@ -44,6 +49,7 @@ const Content = ({parts}) => {
       {parts.map(part => 
         <Part key={part.id} name={part.name} exercises={part.exercises}></Part>
       )}
+      <Total parts={parts}></Total>
     </ul>
   )
 }
@@ -51,6 +57,16 @@ const Content = ({parts}) => {
 const Part = ({name, exercises}) => {
   return (
     <li>{name} {exercises}</li>
+  )
+}
+
+const Total = ({parts}) => {
+  let sum = 0;
+  for(let i = 0; i < parts.length; i++){
+    sum+=parts[i].exercises;
+  }
+  return (
+    <li><b>total of {sum} exercises</b></li>
   )
 }
 
