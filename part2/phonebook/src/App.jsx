@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import noteService from './services/notes'
 import axios from 'axios'
 
 
@@ -6,11 +7,11 @@ const App = () => {
   const [persons, setPersons] = useState([])
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
+    noteService
+    .getAll()
+    .then(initialPersons => {
+      setPersons(initialPersons)
+    })
   }, [])
 
   const [newName, setNewName] = useState('')
@@ -31,10 +32,10 @@ const App = () => {
     }else {
       const newPersons = persons.concat(nameObject);
       setPersons(newPersons);
-      axios
-      .post('http://localhost:3001/persons', nameObject)
+      noteService
+      .create(nameObject)
       .then(response => {
-        setPersons(persons.concat(response.data))
+        setPersons(persons.concat(response))
       })
     }
     setNewName('')
