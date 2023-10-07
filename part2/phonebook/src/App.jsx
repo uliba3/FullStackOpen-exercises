@@ -27,6 +27,7 @@ const App = () => {
       setPersons(persons.concat(nameObject));
     }
     setNewName('')
+    setNewNumber('')
   }
 
   const personsToShow = persons.filter(person => person.name.includes(filterValue));
@@ -46,22 +47,40 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>filter shown with<input value={filterValue} onChange={handleFilterValueChange}/></div>
+      <Filter filterValue={filterValue} handleFilterValueChange={handleFilterValueChange}/>
       <h2>add a new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>number: <input value={newNumber} onChange={handleNumberChange}/></div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm addName={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
+      <Persons personsToShow={personsToShow}/>
+    </div>
+  )
+}
+
+const Filter = ({filterValue, handleFilterValueChange}) => {
+  return <div>filter shown with<input value={filterValue} onChange={handleFilterValueChange}/></div>
+}
+
+const PersonForm = ({addName, newName, handleNameChange, newNumber, handleNumberChange}) => {
+  return (
+    <form onSubmit={addName}>
+    <div>
+      name: <input value={newName} onChange={handleNameChange}/>
+    </div>
+    <div>number: <input value={newNumber} onChange={handleNumberChange}/></div>
+    <div>
+      <button type="submit">add</button>
+    </div>
+  </form>
+  )
+}
+
+const Persons = ({personsToShow}) => {
+  return (
+    <>
       {personsToShow.map((person, i) =>
         <div key={i} >{person.name} {person.number}</div>
       )}
-    </div>
+    </>
   )
 }
 
