@@ -16,7 +16,8 @@ const App = () => {
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [filterValue, setFilterValue] = useState('');
+  const [filterValue, setFilterValue] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   const addName = (event) => {
     event.preventDefault();
@@ -24,7 +25,7 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    console.log(nameObject);
+    console.log(nameObject.name, persons);
     const i = persons.findIndex(person => person.name == nameObject.name);
     if(i > -1){
       alert(`${nameObject.name} is already added to phonebook`);
@@ -35,6 +36,10 @@ const App = () => {
       .create(nameObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
+        setSuccessMessage(`Added ${returnedPerson.name}`)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
       })
     }
     setNewName('')
@@ -48,9 +53,9 @@ const App = () => {
     if(window.confirm(`Delete ${personToDelete.name}?`)){
       noteService
       .deleteOne(personToDelete.id)
-      .then(request => {
+      .then(
         setPersons(persons.filter(person => person.id!==personToDelete.id))
-      })
+      )
     }
   }
 
@@ -69,11 +74,31 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage}/>
       <Filter filterValue={filterValue} handleFilterValueChange={handleFilterValueChange}/>
       <h2>add a new</h2>
       <PersonForm addName={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
       <Persons personsToShow={personsToShow} deletePerson={deletePerson}/>
+    </div>
+  )
+}
+
+const Notification = (message) => {
+  const success = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    border: 'none'
+  }
+  if (message.message === '') {
+    return
+  }
+
+  return (
+    <div style={success}>
+      {message.message}
     </div>
   )
 }
@@ -106,4 +131,4 @@ const Persons = ({personsToShow, deletePerson}) => {
   )
 }
 
-export default App;
+export {App}
