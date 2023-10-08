@@ -26,7 +26,6 @@ const App = () => {
     }
     console.log(nameObject);
     const i = persons.findIndex(person => person.name == nameObject.name);
-    console.log(i);
     if(i > -1){
       alert(`${nameObject.name} is already added to phonebook`);
     }else {
@@ -34,8 +33,8 @@ const App = () => {
       setPersons(newPersons);
       noteService
       .create(nameObject)
-      .then(response => {
-        setPersons(persons.concat(response))
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
       })
     }
     setNewName('')
@@ -43,6 +42,17 @@ const App = () => {
   }
 
   const personsToShow = persons.filter(person => person.name.includes(filterValue));
+
+  const deletePerson = (personToDelete) => {
+    
+    if(window.confirm(`Delete ${personToDelete.name}?`)){
+      noteService
+      .deleteOne(personToDelete.id)
+      .then(request => {
+        setPersons(persons.filter(person => person.id!==personToDelete.id))
+      })
+    }
+  }
 
   const handleFilterValueChange = (event) => {
     setFilterValue(event.target.value)
@@ -63,7 +73,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm addName={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} deletePerson={deletePerson}/>
     </div>
   )
 }
@@ -86,11 +96,11 @@ const PersonForm = ({addName, newName, handleNameChange, newNumber, handleNumber
   )
 }
 
-const Persons = ({personsToShow}) => {
+const Persons = ({personsToShow, deletePerson}) => {
   return (
     <>
       {personsToShow.map((person, i) =>
-        <div key={i} >{person.name} {person.number}</div>
+        <div key={i} >{person.name} {person.number}<button onClick={()=>deletePerson(person)}>delete</button></div>
       )}
     </>
   )
