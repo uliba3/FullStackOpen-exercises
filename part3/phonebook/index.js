@@ -26,13 +26,22 @@ let persons = [
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
-  })
+})
+
+app.get('/info', (request, response) => {
+    personsLength = persons.length;
+    let today = new Date();
+    let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let dateTime = date+' '+time;
+    response.send(`<div>Phonebook has info for ${personsLength} people</div></br><div>${dateTime}</div>`);
+})
   
-  app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response) => {
     response.json(persons)
-  })
-  
-  const PORT = 3001
-  app.listen(PORT, () => {
+})
+
+const PORT = 3001
+    app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
-  })
+})
