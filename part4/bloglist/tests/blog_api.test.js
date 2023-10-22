@@ -100,7 +100,7 @@ test('a blog can be deleted', async () => {
   
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
-      .expect(204)
+      .expect(200)
   
     const blogsAtEnd = await helper.blogsInDb()
   
@@ -111,6 +111,29 @@ test('a blog can be deleted', async () => {
     const titles = blogsAtEnd.map(r => r.title)
   
     expect(titles).not.toContain(blogToDelete.title)
+})
+
+test('a blog can be updated', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToReplace = blogsAtStart[0];
+  const newBlog = {
+    title: blogToReplace.title,
+    author: blogToReplace.author,
+    url: blogToReplace.url,
+    likes: blogToReplace.likes + 1
+  }
+
+  await api
+    .put(`/api/blogs/${blogToReplace.id}`)
+    .send(newBlog)
+    .expect(200)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(
+    helper.initialBlogs.length
+  )
+  expect(blogsAtEnd[0].likes).toEqual(newBlog.likes)
 })
 
 afterAll(async () => {
