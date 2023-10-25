@@ -11,6 +11,7 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
+  const [errorMessage, setErrorMessage] = useState('');
 
 
   useEffect(() => {
@@ -32,9 +33,23 @@ const App = () => {
       .create(blogObject)
         .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
+        setErrorMessage(
+          `${newTitle} by ${newAuthor} added!!`
+        )
         setNewTitle('')
         setNewAuthor('')
         setNewURL('')
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 5000)
+      })
+      .catch(error => {
+        setErrorMessage(
+          `${error}`
+        )
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 5000)
       })
   }
 
@@ -74,7 +89,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setErrorMessage(`wrong username or password`)
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -140,6 +155,7 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
+      {errorMessage}
       {!user && loginForm()} 
       {user && <div>
         <p>{user.name} logged in<button onClick={logOut}>logout</button></p>
