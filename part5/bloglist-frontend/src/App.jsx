@@ -31,7 +31,6 @@ const App = () => {
   const getAllBlogs = async () => {
     const Blogs = await blogService.getAll()
     setBlogs(Blogs.sort((a, b) => a.likes - b.likes).reverse())
-    
   }
 
   const addBlog = (blogObject) => {
@@ -41,7 +40,7 @@ const App = () => {
         .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         setSuccessMessage(
-          `${blogObject.title} by ${blogObject.author} added!!`
+          `${blogObject.title} by ${blogObject.user} added!!`
         )
         setTimeout(() => {
           setSuccessMessage('');
@@ -60,7 +59,7 @@ const App = () => {
   const updateBlog = async (blogObject) => {
     try {
       const updatedBlog = await blogService
-        .update(blogObject.id, blogObject)
+        .update(blogObject)
       setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : updatedBlog))
       setSuccessMessage(
         `Blog ${blogObject.title} was successfully updated`
@@ -72,6 +71,29 @@ const App = () => {
     } catch(exception) {
       setErrorMessage(
         `Cannot update blog ${blogObject.title}`
+      )
+      setSuccessMessage(null)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    }
+  }
+
+  const deleteBlog = async (blogObject) => {
+    try {
+      const deletedBlog = await blogService
+        .erase(blogObject)
+      setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+      setSuccessMessage(
+        `Blog ${blogObject.title} was successfully updated`
+      )
+      setErrorMessage(null)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch(exception) {
+      setErrorMessage(
+        `Cannot delete blog ${blogObject.title}`
       )
       setSuccessMessage(null)
       setTimeout(() => {
@@ -130,14 +152,14 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      {errorMessage}
+      {errorMessage}{successMessage}
       {!user && loginForm()} 
       {user && <div>
         <p>{user.name} logged in<button onClick={logOut}>logout</button></p>
         <h2>Create new</h2>
         {blogForm()}
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
+          <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user}/>
         )}
         </div>
       }
