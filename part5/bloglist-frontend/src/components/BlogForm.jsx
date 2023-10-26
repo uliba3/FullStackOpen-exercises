@@ -14,6 +14,9 @@ const BlogForm = ({
             url: newURL,
             likes: 0
         })
+        setNewTitle('')
+        setNewAuthor('')
+        setNewURL('')
     }
     return (
     <form onSubmit={addBlog}>

@@ -11,16 +11,28 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
   const [loginVisible, setLoginVisible] = useState(false)
 
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    getAllBlogs()
+
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
   }, [])
+
+  const getAllBlogs = async () => {
+    const Blogs = await blogService.getAll()
+    setBlogs(Blogs.sort((a, b) => a.likes - b.likes).reverse())
+    
+  }
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
@@ -28,11 +40,11 @@ const App = () => {
       .create(blogObject)
         .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setErrorMessage(
+        setSuccessMessage(
           `${blogObject.title} by ${blogObject.author} added!!`
         )
         setTimeout(() => {
-          setErrorMessage('');
+          setSuccessMessage('');
         }, 5000)
       })
       .catch(error => {
@@ -45,14 +57,28 @@ const App = () => {
       })
   }
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+  const updateBlog = async (blogObject) => {
+    try {
+      const updatedBlog = await blogService
+        .update(blogObject.id, blogObject)
+      setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : updatedBlog))
+      setSuccessMessage(
+        `Blog ${blogObject.title} was successfully updated`
+      )
+      setErrorMessage(null)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch(exception) {
+      setErrorMessage(
+        `Cannot update blog ${blogObject.title}`
+      )
+      setSuccessMessage(null)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
     }
-  }, [])
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -111,7 +137,7 @@ const App = () => {
         <h2>Create new</h2>
         {blogForm()}
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
         )}
         </div>
       }
