@@ -8,8 +8,8 @@ import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -37,13 +37,13 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
-        .then(returnedBlog => {
+      .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         setSuccessMessage(
           `${blogObject.title} by ${blogObject.user} added!!`
         )
         setTimeout(() => {
-          setSuccessMessage('');
+          setSuccessMessage('')
         }, 5000)
       })
       .catch(error => {
@@ -51,7 +51,7 @@ const App = () => {
           `${error}`
         )
         setTimeout(() => {
-          setErrorMessage('');
+          setErrorMessage('')
         }, 5000)
       })
   }
@@ -104,20 +104,20 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username, password,
       })
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage(`wrong username or password`)
+      setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -125,20 +125,20 @@ const App = () => {
   }
 
   const logOut = () => {
-    window.localStorage.clear();
-    setUser(null);
+    window.localStorage.clear()
+    setUser(null)
   }
 
   const loginForm = () => (
     <Togglable buttonLabel="log in">
-        <LoginForm
-          handleLogin={handleLogin}
-          handleSetUsername={({ target }) => setUsername(target.value)}
-          username={username}
-          handleSetPassword={({ target }) => setPassword(target.value)}
-          password={password}
-        /> 
-    </Togglable>  
+      <LoginForm
+        handleLogin={handleLogin}
+        handleSetUsername={({ target }) => setUsername(target.value)}
+        username={username}
+        handleSetPassword={({ target }) => setPassword(target.value)}
+        password={password}
+      />
+    </Togglable>
   )
 
   const blogForm = () => (
@@ -153,7 +153,7 @@ const App = () => {
     <div>
       <h2>Blogs</h2>
       {errorMessage}{successMessage}
-      {!user && loginForm()} 
+      {!user && loginForm()}
       {user && <div>
         <p>{user.name} logged in<button onClick={logOut}>logout</button></p>
         <h2>Create new</h2>
@@ -161,9 +161,9 @@ const App = () => {
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user}/>
         )}
-        </div>
+      </div>
       }
-      
+
     </div>
   )
 }
