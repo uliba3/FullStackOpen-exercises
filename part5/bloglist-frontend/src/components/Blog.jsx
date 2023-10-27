@@ -4,7 +4,8 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
   const [view, setView] = useState(false)
   const hideWhenVisible = { display: view ? 'none' : '' }
   const showWhenVisible = { display: view ? '' : 'none' }
-  const showWhenOwner = { display: (typeof blog.user ==='string')||(blog.user.username === user.username) ? '' : 'none' }
+  //const showWhenOwner = { display: (blog.user === undefined)||(typeof blog.user ==='string')||(blog.user.username === user.username) ? '' : 'none' }
+  const showWhenOwner = { display: blog.user.username === user.username ? '' : 'none' }
   const toggleView = () => {
     setView(!view)
   }
@@ -30,14 +31,14 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
   }
   return (
     <div style={blogStyle} className='blog'>
-      <div style={hideWhenVisible}>{blog.title}<button onClick={toggleView}>view</button></div>
+      <div style={hideWhenVisible}>{blog.title}<button id="view-button" onClick={toggleView}>view</button></div>
       <div style={showWhenVisible}>
         {blog.title}<button onClick={toggleView}>hide</button><br/>
         {blog.url}<br/>
-      likes {blog.likes}<button onClick={addLike}>likes</button><br/>
+      likes {blog.likes}<button id="addLike" onClick={addLike}>likes</button><br/>
         {blog.author}
       </div>
-      <button style={showWhenOwner} onClick={eraseBlog}>delete</button>
+      <button id="delete-button" style={showWhenOwner} onClick={eraseBlog}>delete</button>
     </div>
   )}
 

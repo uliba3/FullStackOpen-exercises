@@ -33,27 +33,27 @@ const App = () => {
     setBlogs(Blogs.sort((a, b) => a.likes - b.likes).reverse())
   }
 
-  const addBlog = (blogObject) => {
+  const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setSuccessMessage(
-          `${blogObject.title} by ${blogObject.user} added!!`
-        )
-        setTimeout(() => {
-          setSuccessMessage('')
-        }, 5000)
-      })
-      .catch(error => {
-        setErrorMessage(
-          `${error}`
-        )
-        setTimeout(() => {
-          setErrorMessage('')
-        }, 5000)
-      })
+    try {
+      await blogService.create(blogObject)
+      await getAllBlogs()
+      setSuccessMessage(
+        `${blogObject.title} by ${user.username} added!!`
+      )
+      setErrorMessage(null)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch(exception) {
+      setErrorMessage(
+        `Cannot update blog ${blogObject.title}`
+      )
+      setSuccessMessage(null)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    }
   }
 
   const updateBlog = async (blogObject) => {
