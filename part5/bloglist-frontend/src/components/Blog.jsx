@@ -29,7 +29,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
     deleteBlog(blog)
   }
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <div style={hideWhenVisible}>{blog.title}<button onClick={toggleView}>view</button></div>
       <div style={showWhenVisible}>
         {blog.title}<button onClick={toggleView}>hide</button><br/>
