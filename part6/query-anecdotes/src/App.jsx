@@ -3,9 +3,12 @@ import { getAnecdotes, updateAnecdote } from './requests'
 import axios from 'axios'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
+import { useContext } from 'react'
+import { useNotificationDispatch } from './NotificationContext'
 
 const App = () => {
   const queryClient = useQueryClient()
+  const dispatch = useNotificationDispatch()
 
   const updateAnecdoteMutation = useMutation({
     mutationFn: updateAnecdote,
@@ -14,10 +17,13 @@ const App = () => {
     },
   })
 
-
-  const handleVote = (anecdote) => {
+  const handleVote = async (anecdote) => {
     updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes + 1})
+    await dispatch({type: 'VOTE',content: anecdote.content})
     console.log('vote')
+    setTimeout(() => {
+      dispatch({type: 'RESET'})
+    }, 5000)
   }
 
   const result = useQuery({
