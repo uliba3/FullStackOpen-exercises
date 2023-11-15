@@ -8,7 +8,7 @@ interface result {
     average: number
 }
 
-const calculateExercises = (targetHours: number, hours: number[]) => {
+export const calculateExercises = (targetHours: number, hours: number[]) => {
     const periodLength = hours.length;
     const trainingDays = hours.filter(hour => hour > 0).length;
     const totalHours = hours.reduce((a, b) => a + b, 0);
@@ -33,10 +33,10 @@ const calculateExercises = (targetHours: number, hours: number[]) => {
         target: targetHours,
         average: totalHours/periodLength
     }
-    console.log(res);
+    return res;
 }
 
 const targetHours: number = Number(process.argv[2]);
 const hours: number[] = process.argv.slice(3).map(Number);
 
-calculateExercises(targetHours, hours);
+console.log(calculateExercises(targetHours, hours));
