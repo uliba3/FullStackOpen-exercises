@@ -5,17 +5,18 @@ import patientService from '../services/patientService';
 const router = express.Router();
 
 router.get('/', (_req, res) => {
-  res.send(patientService.getNonSensitiveEntries());
+  res.send(patientService.getEntries());
 });
 
 router.post('/', (req, res) => {
-  const { name, dateOfBirth, ssn, gender, occupation } = req.body;
+  const { name, dateOfBirth, ssn, gender, occupation, entries } = req.body;
   const addedEntry = patientService.addPatient({
     name, 
     dateOfBirth, 
     ssn, 
     gender, 
-    occupation
+    occupation,
+    entries,
   });
   res.json(addedEntry);
 });
